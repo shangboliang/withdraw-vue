@@ -1,11 +1,11 @@
 <template>
         <header>
         <div>
-            <h1 style="margin-top: -10px;color: #425049;font-size:30px; ">欢迎来到编程界明世隐的Vue项目</h1>
+            <h1 style="margin-top: 0px;color: #425049;font-size:30px; ">欢迎</h1>
         </div>
             <div class="demo-basic--circle">
                 <div class="block">
-                    <el-avatar :size="40" :src="avatar" :class="['avatar-info']">
+                    <el-avatar :size="60" :src="avatar" :class="['avatar-info']">
                     </el-avatar>
                 </div>
             </div>
@@ -33,7 +33,7 @@
     }
     /*设定头像图片样式*/
     .avatar-info {
-        margin-top: 10px;
+        margin-top: 5px;
         margin-right: 40px;
         cursor: pointer;
     }
