@@ -16,7 +16,7 @@
   <script>
   import CommonAside from "@/components/CommonAside";
   import MyComponentHeader from "./MyComponentHeader";
-import MyComponentFooter from "./MyComponentFooter.vue";
+  import MyComponentFooter from "./MyComponentFooter.vue";
 
   export default {
     name: "MyComponentMain",
@@ -27,10 +27,10 @@ import MyComponentFooter from "./MyComponentFooter.vue";
           };
     },
     components:{
-    CommonAside,
-    MyComponentHeader,
-    MyComponentFooter
-}
+      CommonAside,
+      MyComponentHeader,
+      MyComponentFooter
+    }
   }
   </script>
   
