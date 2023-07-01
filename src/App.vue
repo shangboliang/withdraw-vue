@@ -5,9 +5,9 @@
       <el-header>
         <nav>
           <router-link to="/">Home</router-link> |
-          <router-link to="/demo2">About1</router-link> |
-          <router-link to="/demo3">About2</router-link> |
-          <router-link to="/zk_view">zk_view</router-link>
+          <!-- <router-link to="/demo2">About1</router-link> | -->
+          <router-link to="/demo3">欧易提现</router-link> |
+          <!-- <router-link to="/zk_view">zk_view</router-link> -->
         </nav>
       </el-header>
 
