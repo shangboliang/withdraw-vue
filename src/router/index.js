@@ -6,7 +6,9 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/', component: () => import('../views/HomePage.vue') },
   { path: '/demo2', component: () => import('../views/Demo2Page.vue') },
-  { path: '/demo3', component: () => import('../views/Demo3Page.vue') }
+  { path: '/demo3', component: () => import('../views/Demo3Page.vue') },
+  { path: '/zk_view', component: () => import('../views/ZkView.vue') }
+
 ]
 
 const router = new VueRouter({

@@ -8,18 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@binance/connector": "^3.0.0-rc.2",
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
+    "crypto-js": "^4.1.1",
     "element-ui": "^2.15.13",
-    "https-proxy-agent": "^7.0.0",
-    "net": "^1.0.2",
     "node-polyfill-webpack-plugin": "^2.0.1",
-    "socks-proxy-agent": "^8.0.1",
-    "tls": "^0.0.1",
-    "tunnel": "^0.0.6",
     "vue": "^2.6.14",
-    "vue-router": "^3.5.1"
+    "vue-router": "^3.5.1",
+    "web3": "^4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

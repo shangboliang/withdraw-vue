@@ -121,7 +121,6 @@
 
 const crypto = require('crypto');
 import axios from 'axios';
-// const { Spot } = require('@binance/connector')
 
 export default {
     data() {
