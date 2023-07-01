@@ -3,15 +3,15 @@
         <el-row :gutter="10">
             <el-col :span="4">
                 <span>apiKey:&nbsp; </span>
-                <el-input v-model="apiKey" @change="changeSecret" placeholder="请输入内容"></el-input>
+                <el-input v-model="apiKey" @change="changeSecret" @blur="changeSecret" placeholder="请输入内容"></el-input>
             </el-col>
             <el-col :span="4">
                 <span>secretKey:&nbsp; </span>
-                <el-input v-model="secret"   @change="changeSecret"  placeholder="请输入内容" show-password ></el-input>
+                <el-input v-model="secret"   @change="changeSecret"   @blur="changeSecret" placeholder="请输入内容" show-password ></el-input>
             </el-col>
             <el-col :span="4">
                 <span>passphrase:&nbsp; </span>
-                <el-input v-model="passphrase"   @change="changeSecret"   placeholder="请输入内容" show-password ></el-input>
+                <el-input v-model="passphrase"   @change="changeSecret"   @blur="changeSecret"  placeholder="请输入内容" show-password ></el-input>
             </el-col>
             <el-col :span="10">
                 <span>执行间隔时间(ms):&nbsp;</span>
@@ -20,17 +20,20 @@
                 <el-input v-model="endTime" placeholder="请输入内容" style="width: 20%;"></el-input>
             </el-col>
         </el-row>
-        <el-row :gutter="10">
-            <el-col :span="10">
+        <el-row :gutter="5">
+            <el-col :span="8">
                 coin
-                <el-select v-model="coin"  filterable  @change="coinChagne" style="width:250px;"
+                <el-select  v-model="coinAndChain" value-key="coin" filterable  @change="coinChagne" style="width: 100%;"
                     placeholder="请输入关键词" >
-                    <el-option v-for="item in coinList" :key="item.coin" :label="item.coin" :value="item.coin">
-                              <span style="float: left">{{ item.coin }}</span>
-                                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.chain }}</span>
+                    <el-option v-for="item in coinList" :key="item.coin" :label="item.coin" :value="item">
+                              <!-- <span style="float: left">{{ item.coin }}</span>
+                                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.chain }}</span> -->
                     </el-option>
                 </el-select>
-                {{network}}
+               
+            </el-col>
+            <el-col :span="4">
+                <span style="text-align: center;">  {{network}},{{minFee}}</span>
             </el-col>
             <el-col :span="4" >
                 <span>数量</span>
@@ -135,6 +138,8 @@ export default {
             coinDataList:[],
             withdrawFee:'',
             passphrase:'',
+            coinAndChain:'',
+            minFee:'',
         
         }
     },
@@ -162,7 +167,7 @@ export default {
                 console.log(response);
                 if(response.status===200){
                     this.coinDataList = response.data.data;
-                    this.coinList = this.coinDataList.map(item => {return{coin:item.ccy,chain:item.chain,minFee:item.minFee}});
+                    this.coinList = this.coinDataList.map(item => {return{coin:item.ccy+'  '+item.chain,chain:item.chain,minFee:item.minFee,ccy:item.ccy}});
                 }else{ 
                     this.$message.error(response.data.msg);
                 }})
@@ -182,7 +187,9 @@ export default {
         },
         // 网络查询
         coinChagne(item) {
+            this.coin = item.ccy
             this.network = item.chain
+            this.minFee=item.minFee
         },
         tableRowClassName({row, rowIndex}) {
             if (row.resStatus === 0) {
@@ -241,21 +248,21 @@ export default {
             const url = '/api/v5/asset/withdrawal' 
             let data  = {
                 "ccy": this.coin,
-                "amt": this.quantity,
+                "amt": item.quantity,
                 "dest": '4',
                 "toAddr": item.address,
-                "fee":'0',
-                "chain": item.network,
+                "fee":this.minFee,
+                "chain": this.network,
             };
 
-            const queryStr = JSON.stringify(data); 
-            let contextStr = timestamp + "GET" + url + queryStr
+            const timestamp = new Date().toISOString();
+            let contextStr = timestamp + "POST" + url + JSON.stringify(data)
+            console.log(contextStr);
             const signature = crypto
                 .createHmac('sha256', this.secret)
                 .update(contextStr)
-                .digest('hex');
-            data.signature=signature
-            axios.post(url, null, { params:data,
+                .digest('base64');
+            axios.post(baseurl+url, data, { 
                 headers: {
                     'Content-Type': 'application/json', // 设置请求头的Content-Type
                     'OK-ACCESS-KEY': this.apiKey,
@@ -294,9 +301,6 @@ export default {
             if(this.network.trim()==''){
                 this.$message.error('请选择网络');
             }
-            if(this.quantity.trim()==''){
-                this.$message.error('请输入quantity');
-            }
             for (let i = 0; i < this.tableData.length; i++) {
                 const obj = this.tableData[i];
                 this.sendReq(obj)
@@ -314,7 +318,10 @@ export default {
         }
     },
     mounted() {
-        // this.getCoinAll()
+        // this.secret = '',
+        // this.apiKey = '',
+        // this.passphrase = ''
+        this.getCoinAll()
     },
 
 }
