@@ -26,14 +26,12 @@
                 <el-select  v-model="coinAndChain" value-key="coin" filterable  @change="coinChagne" style="width: 100%;"
                     placeholder="请输入关键词" >
                     <el-option v-for="item in coinList" :key="item.coin" :label="item.coin" :value="item">
-                              <!-- <span style="float: left">{{ item.coin }}</span>
-                                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.chain }}</span> -->
                     </el-option>
                 </el-select>
-               
             </el-col>
             <el-col :span="4">
-                <span style="text-align: center;">  {{network}},{{minFee}}</span>
+                <span>提现费用</span>
+                <el-input v-model="minFee"  @change="changeSecret" disabled @blur="changeSecret" placeholder="请输入内容"></el-input>
             </el-col>
             <el-col :span="4" >
                 <span>数量</span>
@@ -145,7 +143,6 @@ export default {
     },
     methods: {
         getCoinAll(){
-
             let url = '/api/v5/asset/currencies'
             const timestamp = new Date().toISOString();
             const context = timestamp + "GET" + url
@@ -230,7 +227,7 @@ export default {
                 this.tableData = filteredArr.map(item => {
                     let money = fixedFlag?this.fixedMoney:this.getRandomNum(this.startMoney,parseFloat(this.endMoney))
                     money = Math.floor(parseFloat(money) * 10000) / 10000;
-                    const randomTime = this.getRandomNum(this.startTime,this.endTime)
+                    const randomTime =Math.floor(this.getRandomNum(this.startTime,this.endTime)); 
                     return { address: item, quantity:money,waitTime:randomTime,info:'',resStatus:2,coin:this.coin,network:this.network};
                 });
                 console.log(this.tableData);
@@ -244,7 +241,10 @@ export default {
             // 更新当前输入框的值
             this.$emit('input', newValue)
         },
-        sendReq(item){
+        sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        },
+        async sendReq(item){
             const url = '/api/v5/asset/withdrawal' 
             let data  = {
                 "ccy": this.coin,
@@ -273,16 +273,20 @@ export default {
             }).then(response => {
                 // 请求成功的处理逻辑
                 console.log(response.data);
+                if(response.data!=null&&response.data!=0){
+                    item.resStatus=0
+                    item.info=response.data.msg;
+                }
             })
             .catch(error => {
                 // 请求失败的处理逻辑
                 console.error(error);
-                item.resStatus=0
                 this.$message.error(error.response.data);
+                item.info="网络异常"
             });
                 
         },
-        commitReq(){
+        async commitReq(){
             if(this.tableData.length<=0){
                 this.$message.error('请先解析');
             }
@@ -301,9 +305,17 @@ export default {
             if(this.network.trim()==''){
                 this.$message.error('请选择网络');
             }
+        
             for (let i = 0; i < this.tableData.length; i++) {
                 const obj = this.tableData[i];
-                this.sendReq(obj)
+
+                console.log("睡眠中");
+                console.log(new Date().toLocaleTimeString());
+                await this.sleep(obj.waitTime)
+                console.log("睡眠结束");
+                console.log(new Date().toLocaleTimeString());
+
+                await this.sendReq(obj)
             }
             // 请求拦截器
             axios.interceptors.request.use((config) => {
@@ -318,9 +330,6 @@ export default {
         }
     },
     mounted() {
-        // this.secret = '',
-        // this.apiKey = '',
-        // this.passphrase = ''
         this.getCoinAll()
     },
 

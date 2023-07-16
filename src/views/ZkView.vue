@@ -18,7 +18,6 @@
 
 <script>
 import axios from 'axios';
-// const BigDecimal = require('bigdecimal');
 import Web3 from 'web3';
         const web3 = new Web3();
 
